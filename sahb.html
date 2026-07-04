@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>طلب السحب</title>
+<style>
+body { background:#f5f5f5; font-family:Arial; padding:20px; }
+.box { background:white; padding:20px; border-radius:10px; margin-bottom:15px; }
+h2 { color:#00aaff; }
+input { width:95%; padding:10px; margin:10px 0; border:1px solid #ddd; border-radius:5px; }
+button { width:100%; background:#00aaff; color:white; border:none; padding:15px; border-radius:5px; font-size:18px; }
+.solde { font-size:24px; color:green; font-weight:bold; }
+</style>
+</head>
+<body>
+
+<h2>💰 طلب السحب</h2>
+
+<div class="box">
+  <p>الرصيد المتاح</p>
+  <p class="solde">MAD <span id="solde">0.00</span></p>
+  <p style="color:red;">الحد الأدنى للسحب: 100 درهم</p>
+</div>
+
+<div class="box">
+  <h3>معلومات السحب</h3>
+  <input type="text" id="nom" placeholder="الاسم الكامل">
+  <input type="tel" id="telephone" placeholder="رقم الهاتف للسحب">
+  <input type="text" id="methode" placeholder="طريقة السحب: CIH, البريد, ...">
+  <button onclick="demanderSahb()">تأكيد السحب</button>
+</div>
+
+<script>
+let solde = 0; // دابا 0. من بعد غادي نجيبو من Firebase
+
+document.getElementById('solde').innerText = solde.toFixed(2);
+
+function demanderSahb() {
+  let nom = document.getElementById('nom').value;
+  let tel = document.getElementById('telephone').value;
+  
+  if(solde < 100){
+    alert('الرصيد ديالك قل من 100 درهم ❌');
+    return;
+  }
+  if(nom == '' || tel == ''){
+    alert('عمر جميع الخانات');
+    return;
+  }
+  
+  alert('تم ارسال طلب السحب بنجاح ✅\nسيصلك المبلغ خلال 24 ساعة');
+  
+  // هنا من بعد غادي نصيفطو المعلومات لـ Google Sheet
+  solde = 0; // كنصفرو الرصيد من بعد السحب
+  document.getElementById('solde').innerText = solde.toFixed(2);
+}
+</script>
+
+</body>
+</html>
