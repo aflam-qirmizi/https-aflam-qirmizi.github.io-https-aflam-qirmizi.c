@@ -1,88 +1,23 @@
 
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<title>المهام</title>
-<style>
-body { background:#f5f5f5; font-family:Arial; margin:0; padding:10px; }
-.header { background:white; padding:10px; border-radius:10px; margin-bottom:10px; }
-.product { background:white; padding:10px; border-radius:10px; margin-bottom:10px; display:flex; align-items:center; }
-.product img { width:60px; height:60px; border-radius:5px; margin-left:10px; }
-.btn { background:#ff69b4; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; }
-.btn:disabled { background:gray; cursor:not-allowed; }
-</style>
-</head>
-<body>
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
-<div class="header">
-  <h3>⚡ المهام اليومية</h3>
-  <p>لقد اكملت: <span id="count">0</span> / 10 مهام</p>
-  <p>ربحتي اليوم: <span id="earned">0</span> درهم</p>
-</div>
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyA6fo63qKcstFX8xFhGUD5wIRprabL0qso",
+  authDomain: "shein-maroc-app.firebaseapp.com",
+  databaseURL: "https://shein-maroc-app-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "shein-maroc-app",
+  storageBucket: "shein-maroc-app.firebasestorage.app",
+  messagingSenderId: "105488018363",
+  appId: "1:105488018363:web:04595ef4d6f2dcff2ab29e",
+  measurementId: "G-J1ZXQ3FFW1"
+};
 
-<div id="products"></div>
-
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
-  import { getDatabase, ref, get, set, update, child } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyA6fo63qKcstFX8xFhGUD5wIRp...",
-    databaseURL: "https://shein-maroc-app-default-rtdb.firebaseio.com",
-    projectId: "shein-maroc-app",
-  };
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase();
-  const userPhone = "0651234567";
-
-  const products = [
-    {id:1, name:"فستان", img:"https://via.placeholder.com/60"},
-    {id:2, name:"حقيبة", img:"https://via.placeholder.com/60"},
-    {id:3, name:"حذاء", img:"https://via.placeholder.com/60"}
-  ];
-
-  let userData = {solde:0, tasksCompleted:0, completedTasks:[]};
-
-  async function loadData() {
-    const snapshot = await get(child(ref(db), 'users/' + userPhone));
-    if(snapshot.exists()) userData = snapshot.val();
-    document.getElementById('count').innerText = userData.tasksCompleted;
-    document.getElementById('earned').innerText = (userData.tasksCompleted * 0.5).toFixed(2);
-    renderProducts();
-  }
-
-  function renderProducts() {
-    let html = '';
-    products.forEach(p => {
-      let done = userData.completedTasks.includes(p.id);
-      html += `
-      <div class="product">
-        <img src="${p.img}">
-        <div style="flex:1">
-          <b>${p.name}</b><br>
-          <button class="btn" onclick="completeTask(${p.id})" ${done?'disabled':''}>
-            ${done? 'تم': '+0.5 درهم'}
-          </button>
-        </div>
-      </div>`;
-    });
-    document.getElementById('products').innerHTML = html;
-  }
-
-  window.completeTask = async function(id) {
-    if(userData.completedTasks.includes(id)) return;
-    
-    userData.solde += 0.5;
-    userData.tasksCompleted += 1;
-    userData.completedTasks.push(id);
-    
-    await set(ref(db, 'users/' + userPhone), userData);
-    alert('ربحتي +0.5 درهم 🎉');
-    loadData();
-  }
-
-  loadData();
-</script>
-</body>
-</html>
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
