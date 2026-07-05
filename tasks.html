@@ -1,29 +1,31 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>المهام اليومية</title>
+<title>المهام</title>
 <style>
-body { background:#fff0f5; font-family:Arial; text-align:center; padding:10px; }
-h2 { color:#ff69b4; }
-.product { background:white; border:1px solid #ff69b4; margin:10px; padding:10px; border-radius:10px; }
-button { background:#ff69b4; color:white; border:none; padding:10px 20px; border-radius:5px; font-size:16px; }
-button:disabled { background:gray; }
+body { background:#f5f5f5; font-family:Arial; margin:0; padding:10px; }
+.header { background:white; padding:10px; border-radius:10px; margin-bottom:10px; }
+.product { background:white; padding:10px; border-radius:10px; margin-bottom:10px; display:flex; align-items:center; }
+.product img { width:60px; height:60px; border-radius:5px; margin-left:10px; }
+.btn { background:#ff69b4; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; }
+.btn:disabled { background:gray; cursor:not-allowed; }
 </style>
 </head>
 <body>
 
-<h2>⚡ المهام اليومية</h2>
-<p>لقد اكملت: <span id="compteur">0</span> / 10 مهام</p>
-<p>ربحتي اليوم: <span id="arba7">0</span> درهم</p>
+<div class="header">
+  <h3>⚡ المهام اليومية</h3>
+  <p>لقد اكملت: <span id="count">0</span> / 10 مهام</p>
+  <p>ربحتي اليوم: <span id="earned">0</span> درهم</p>
+</div>
 
-<div class="product"><img src="https://via.placeholder.com/150/ff69b4/ffffff?text=1" width="150"><p>فستان</p><button onclick="gagner(this)">+0.5 درهم</button></div>
-<div class="product"><img src="https://via.placeholder.com/150/ff69b4/ffffff?text=2" width="150"><p>حقيبة</p><button onclick="gagner(this)">+0.5 درهم</button></div>
-<div class="product"><img src="https://via.placeholder.com/150/ff69b4/ffffff?text=3" width="150"><p>حذاء</p><button onclick="gagner(this)">+0.5 درهم</button></div>
+<div id="products"></div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
-  import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
+  import { getDatabase, ref, get, set, update, child } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyA6fo63qKcstFX8xFhGUD5wIRp...",
@@ -34,27 +36,53 @@ button:disabled { background:gray; }
   const db = getDatabase();
   const userPhone = "0651234567";
 
-  let compteur = 0;
-  let solde = 0;
+  const products = [
+    {id:1, name:"فستان", img:"https://via.placeholder.com/60"},
+    {id:2, name:"حقيبة", img:"https://via.placeholder.com/60"},
+    {id:3, name:"حذاء", img:"https://via.placeholder.com/60"}
+  ];
 
-  window.onload = async function() {
+  let userData = {solde:0, tasksCompleted:0, completedTasks:[]};
+
+  async function loadData() {
     const snapshot = await get(child(ref(db), 'users/' + userPhone));
-    if (snapshot.exists()) {
-      solde = snapshot.val().solde || 0;
-    }
-    document.getElementById('arba7').innerText = solde.toFixed(2);
+    if(snapshot.exists()) userData = snapshot.val();
+    document.getElementById('count').innerText = userData.tasksCompleted;
+    document.getElementById('earned').innerText = (userData.tasksCompleted * 0.5).toFixed(2);
+    renderProducts();
   }
 
-  window.gagner = function(btn) {
-    if(btn.disabled) return;
-    compteur++;
-    solde = solde + 0.5;
-    document.getElementById('compteur').innerText = compteur;
-    document.getElementById('arba7').innerText = solde.toFixed(2);
-    btn.disabled = true;
-    set(ref(db, 'users/' + userPhone), { solde: solde });
-    alert('ربحتي +0.5 درهم 🎉');
+  function renderProducts() {
+    let html = '';
+    products.forEach(p => {
+      let done = userData.completedTasks.includes(p.id);
+      html += `
+      <div class="product">
+        <img src="${p.img}">
+        <div style="flex:1">
+          <b>${p.name}</b><br>
+          <button class="btn" onclick="completeTask(${p.id})" ${done?'disabled':''}>
+            ${done? 'تم': '+0.5 درهم'}
+          </button>
+        </div>
+      </div>`;
+    });
+    document.getElementById('products').innerHTML = html;
   }
+
+  window.completeTask = async function(id) {
+    if(userData.completedTasks.includes(id)) return;
+    
+    userData.solde += 0.5;
+    userData.tasksCompleted += 1;
+    userData.completedTasks.push(id);
+    
+    await set(ref(db, 'users/' + userPhone), userData);
+    alert('ربحتي +0.5 درهم 🎉');
+    loadData();
+  }
+
+  loadData();
 </script>
 </body>
 </html>
