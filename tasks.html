@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -9,7 +10,6 @@ h2 { color:#ff69b4; }
 .product { background:white; border:1px solid #ff69b4; margin:10px; padding:10px; border-radius:10px; }
 button { background:#ff69b4; color:white; border:none; padding:10px 20px; border-radius:5px; font-size:16px; }
 button:disabled { background:gray; }
-#compteur { font-size:20px; font-weight:bold; color:green; }
 </style>
 </head>
 <body>
@@ -18,52 +18,44 @@ button:disabled { background:gray; }
 <p>لقد اكملت: <span id="compteur">0</span> / 10 مهام</p>
 <p>ربحتي اليوم: <span id="arba7">0</span> درهم</p>
 
-<div class="product">
-  <img src="https://via.placeholder.com/150/ff69b4/ffffff?text=منتوج+1" width="150">
-  <p>فستان صيفي</p>
-  <button onclick="gagner(this)">اضغطي +0.5 درهم</button>
-</div>
+<div class="product"><img src="https://via.placeholder.com/150/ff69b4/ffffff?text=1" width="150"><p>فستان</p><button onclick="gagner(this)">+0.5 درهم</button></div>
+<div class="product"><img src="https://via.placeholder.com/150/ff69b4/ffffff?text=2" width="150"><p>حقيبة</p><button onclick="gagner(this)">+0.5 درهم</button></div>
+<div class="product"><img src="https://via.placeholder.com/150/ff69b4/ffffff?text=3" width="150"><p>حذاء</p><button onclick="gagner(this)">+0.5 درهم</button></div>
 
-<div class="product">
-  <img src="https://via.placeholder.com/150/ff69b4/ffffff?text=منتوج+2" width="150">
-  <p>حقيبة يد</p>
-  <button onclick="gagner(this)">اضغطي +0.5 درهم</button>
-</div>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+  import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
 
-<div class="product">
-  <img src="https://via.placeholder.com/150/ff69b4/ffffff?text=منتوج+3" width="150">
-  <p>حذاء رياضي</p>
-  <button onclick="gagner(this)">اضغطي +0.5 درهم</button>
-</div>
+  const firebaseConfig = {
+    apiKey: "AIzaSyA6fo63qKcstFX8xFhGUD5wIRp...",
+    databaseURL: "https://shein-maroc-app-default-rtdb.firebaseio.com",
+    projectId: "shein-maroc-app",
+  };
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase();
+  const userPhone = "0651234567"; // من بعد نربطوه برقم الدخول
 
-<script>
-let compteur = 0;
-let arba7 = 0;
-let max = 10; // 10 ضغطات فالنهار
+  let compteur = 0;
+  let solde = 0;
 
-function gagner(btn) {
-  if(compteur >= max){
-    alert('كمليتي المهام ديال اليوم 🎉 ارجعي غدا');
-    return;
+  window.onload = async function() {
+    const snapshot = await get(child(ref(db), 'users/' + userPhone));
+    if (snapshot.exists()) {
+      solde = snapshot.val().solde || 0;
+    }
+    document.getElementById('arba7').innerText = solde.toFixed(2);
   }
-  if(btn.disabled) return;
-  
-  compteur++;
-  arba7 = arba7 + 0.5;
-  
-  document.getElementById('compteur').innerText = compteur;
-  document.getElementById('arba7').innerText = arba7;
-  btn.disabled = true;
-  btn.innerText = 'تم ✓';
-  
-  // هنا من بعد غادي نزيدو كود باش نحفظو الرصيد فـ Firebase
-  alert('ربحتي +0.5 درهم 🎉');
-  
-  if(compteur == max){
-    alert('برافو! كمليتي 10 مهام. ربحتي 5 دراهم اليوم');
+
+  window.gagner = function(btn) {
+    if(btn.disabled) return;
+    compteur++;
+    solde = solde + 0.5;
+    document.getElementById('compteur').innerText = compteur;
+    document.getElementById('arba7').innerText = solde.toFixed(2);
+    btn.disabled = true;
+    set(ref(db, 'users/' + userPhone), { solde: solde });
+    alert('ربحتي +0.5 درهم 🎉');
   }
-}
 </script>
-
 </body>
 </html>
