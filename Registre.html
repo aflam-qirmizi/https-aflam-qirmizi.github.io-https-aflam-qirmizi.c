@@ -2,77 +2,61 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>تسجيل حساب</title>
-
+<title>إنشاء حساب</title>
 <style>
-body{
-font-family:Arial;
-background:#f2f2f2;
-margin:0;
-}
-
-.container{
-max-width:400px;
-margin:40px auto;
-background:white;
-padding:20px;
-border-radius:10px;
-box-shadow:0 0 10px rgba(0,0,0,.2);
-}
-
-h2{
-text-align:center;
-color:#0a7cff;
-}
-
-input{
-width:100%;
-padding:12px;
-margin:10px 0;
-border:1px solid #ccc;
-border-radius:5px;
-box-sizing:border-box;
-}
-
-button{
-width:100%;
-padding:12px;
-background:#0a7cff;
-color:white;
-border:none;
-border-radius:5px;
-font-size:18px;
-cursor:pointer;
-}
-
-a{
-display:block;
-text-align:center;
-margin-top:15px;
-text-decoration:none;
-}
+body{background:#f5f5f5;font-family:Arial;text-align:center;padding:20px;}
+.box{background:white;padding:30px;border-radius:15px;max-width:400px;margin:auto;}
+input{width:90%;padding:12px;margin:10px 0;border:1px solid #ddd;border-radius:8px;}
+.btn{background:#00bfff;color:white;padding:15px;width:95%;border:none;border-radius:8px;font-size:18px;cursor:pointer;}
 </style>
-
 </head>
-
 <body>
-
-<div class="container">
-
-<h2>إنشاء حساب</h2>
-
-<input type="text" placeholder="الاسم الكامل">
-
-<input type="email" placeholder="البريد الإلكتروني">
-
-<input type="password" placeholder="كلمة المرور">
-
-<button>تسجيل</button>
-
-<a href="index.html">العودة للرئيسية</a>
-
+<div class="box">
+  <h2 style="color:#00bfff;">إنشاء حساب</h2>
+  <input type="text" id="name" placeholder="الاسم الكامل">
+  <input type="email" id="email" placeholder="البريد الإلكتروني">
+  <input type="password" id="password" placeholder="كلمة السر">
+  <button class="btn" onclick="register()">تسجيل</button>
+  <p><a href="index.html">العودة للرئيسية</a></p>
 </div>
 
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyA-EXAMPLE-KEY", // حطي هنا المفتاح ديالك من Firebase
+    authDomain: "your-project.firebaseapp.com",
+    projectId: "your-project",
+    storageBucket: "your-project.appspot.com",
+    appId: "1:123:web:abc"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  window.register = async function() {
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await setDoc(doc(db, "users", userCredential.user.uid), {
+        name: name,
+        email: email,
+        balance: 0,
+        createdAt: new Date()
+      });
+      alert("تم التسجيل بنجاح!");
+      window.location.href = "tâches.html";
+    } catch (error) {
+      alert("خطأ: " + error.message);
+    }
+  }
+</script>
 </body>
 </html>
+
