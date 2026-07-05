@@ -16,6 +16,30 @@ button:disabled { background:gray; }
 
 <h2>⚡ المهام اليومية</h2>
 <p>لقد اكملت: <span id="compteur">0</span> / 10 مهام</p>
+  let compteur = 0;
+let solde = 0;
+
+window.onload = async function() {
+  const snapshot = await get(child(ref(db), 'users/' + userPhone));
+  if (snapshot.exists()) {
+    solde = snapshot.val().solde || 0;
+  }
+  document.getElementById('arba7').innerText = solde.toFixed(2);
+}
+
+window.gagner = function(btn) {
+  if(btn.disabled) return;
+  compteur++;
+  solde = solde + 0.5;
+  document.getElementById('compteur').innerText = compteur;
+  document.getElementById('arba7').innerText = solde.toFixed(2);
+  btn.disabled = true;
+  set(ref(db, 'users/' + userPhone), { solde: solde });
+  alert('ربحتي +0.5 درهم 🎉');
+}
+</script>
+</body>
+</html>
 <p>ربحتي اليوم: <span id="arba7">0</span> درهم</p>
 
 <div class="product"><img src="https://via.placeholder.com/150/ff69b4/ffffff?text=1" width="150"><p>فستان</p><button onclick="gagner(this)">+0.5 درهم</button></div>
