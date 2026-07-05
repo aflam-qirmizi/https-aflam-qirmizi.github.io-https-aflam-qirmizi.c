@@ -4,20 +4,23 @@
 <meta charset="UTF-8">
 <title>التسجيل</title>
 <style>
-body{background:#f5f5f5;font-family:Arial;display:flex;justify-content:center;align-items:center;height:100vh;}
-.box{background:white;padding:30px;border-radius:15px;width:300px;}
-input{width:100%;padding:12px;margin:10px 0;border:1px solid #ddd;border-radius:8px;}
-button{width:100%;padding:12px;background:#00bfff;color:white;border:none;border-radius:8px;cursor:pointer;}
+body{background:#f5f5f5;font-family:Arial;display:flex;justify-content:center;align-items:center;height:100vh;margin:0;}
+.boite{background:white;padding:30px;border-radius:15px;width:90%;max-width:350px;box-shadow:0 0 10px rgba(0,0,0,0.1);}
+h2{text-align:center;margin-bottom:20px;}
+input{width:100%;padding:12px;margin:10px 0;border:1px solid #ddd;border-radius:8px;box-sizing:border-box;}
+button{width:100%;padding:12px;background:#00bfff;color:white;border:none;border-radius:8px;cursor:pointer;font-size:16px;}
 </style>
 </head>
 <body>
-<div class="box">
+
+<div class="boite">
   <h2>إنشاء حساب جديد</h2>
-  <input type="text" id="name" placeholder="الاسم">
-  <input type="email" id="email" placeholder="الايميل">
-  <input type="password" id="password" placeholder="كلمة السر">
-  <button onclick="register()">تسجيل</button>
+  <input type="text" id="nom" placeholder="الاسم الكامل">
+  <input type="email" id="email" placeholder="البريد الإلكتروني">
+  <input type="password" id="motdepasse" placeholder="كلمة السر">
+  <button onclick="registre()">تسجيل</button>
 </div>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
@@ -31,16 +34,22 @@ button{width:100%;padding:12px;background:#00bfff;color:white;border:none;border
     messagingSenderId: "105488018363",
     appId: "1:105488018363:web:04595ef4d6f2dcff2ab29e"
   };
+
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  window.register = async function(){
-    const name = document.getElementById('name').value;
+  window.registre = async function(){
+    const nom = document.getElementById('nom').value;
     const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    await setDoc(doc(db, "users", userCredential.user.uid), {name: name, email: email, balance: 0});
+    const motdepasse = document.getElementById('motdepasse').value;
+
+    const userCredential = await createUserWithEmailAndPassword(auth, email, motdepasse);
+    await setDoc(doc(db, "users", userCredential.user.uid), {
+      name: nom,
+      email: email,
+      balance: 0
+    });
     alert("تم التسجيل!");
     window.location.href = "tâches.html";
   }
