@@ -3,46 +3,48 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nos Services</title>
+<title>Nos Services - Online Work Maroc</title>
 <link rel="stylesheet" href="style.css">
-<script src="https://www.paypal.com/sdk/js?client-id=AVrEK49ptrG8NLIU-LimKhvzfevBtilBRG2eK-Li9cT7hzoevGLv9QESnvh1KRMO2NtDZ-6Z_d_YGExj&currency=USD"></script>
+<script src="https://www.paypal.com/sdk/js?client-id=SB3D9XW8WQY5C&currency=USD"></script>
 <style>
-.service-card{border:1px solid #ddd;padding:20px;margin:20px 0;border-radius:10px}
-.price{color:#0070ba;font-size:20px;font-weight:bold}
+.service-card{border:1px solid #ddd;padding:20px;margin:20px;border-radius:8px;text-align:center;}
+.prix{color:#0070ba;font-size:20px;font-weight:bold;}
 </style>
 </head>
 <body>
 <header><h1>Travail en ligne Maroc</h1>
-<nav><a href="index.html">Accueil</a> <a href="services.html">Services</a> <a href="Contact.html">Contact</a></nav></header>
+<nav><a href="index.html">Accueil</a> <a href="services.html">Services</a></nav>
+</header>
 
 <main class="container">
-<h2>Nos Services</h2>
+<h2>Nos services</h2>
 
 <div class="service-card">
 <h3>Montage Vidéo Professionnel</h3>
-<p class="price">Prix: 25 USD</p>
-<div id="paypal-button-1"></div>
+<p class="prix">Prix : 25 USD</p>
+<div id="bouton PayPal 1"></div>
 </div>
 
 <div class="service-card">
-<h3>Design Logo</h3>
-<p class="price">Prix: 15 USD</p>
-<div id="paypal-button-2"></div>
+<h3>Conception de logo</h3>
+<p class="prix">Prix : 15 USD</p>
+<div id="bouton PayPal 2"></div>
 </div>
 
 <div class="service-card">
-<h3>Traduction FR-AR-EN</h3>
-<p class="price">Prix: 10 USD</p>
-<div id="paypal-button-3"></div>
+<h3>Gestion Réseaux Sociaux</h3>
+<p class="prix">Prix : 50 USD / mois</p>
+<div id="bouton PayPal 3"></div>
 </div>
 
 </main>
-<footer><p>© 2026 Travail en ligne Maroc</p></footer>
 
 <script>
-paypal.Buttons({createOrder:function(d,a){return a.order.create({purchase_units:[{amount:{value:'25.00'}}]})}}).render('#paypal-button-1');
-paypal.Buttons({createOrder:function(d,a){return a.order.create({purchase_units:[{amount:{value:'15.00'}}]})}}).render('#paypal-button-2');
-paypal.Buttons({createOrder:function(d,a){return a.order.create({purchase_units:[{amount:{value:'10.00'}}]})}}).render('#paypal-button-3');
+paypal.Buttons({createOrder:function(data,actions){return actions.order.create({purchase_units:[{amount:{value:'25.00'}}]})},onApprove:function(data,actions){return actions.order.capture().then(function(details){alert('Paiement réussi! Merci '+details.payer.name.given_name)})}}).render('#bouton PayPal 1');
+paypal.Buttons({createOrder:function(data,actions){return actions.order.create({purchase_units:[{amount:{value:'15.00'}}]})},onApprove:function(data,actions){return actions.order.capture().then(function(details){alert('Paiement réussi! Merci '+details.payer.name.given_name)})}}).render('#bouton PayPal 2');
+paypal.Buttons({createOrder:function(data,actions){return actions.order.create({purchase_units:[{amount:{value:'50.00'}}]})},onApprove:function(data,actions){return actions.order.capture().then(function(details){alert('Paiement réussi! Merci '+details.payer.name.given_name)})}}).render('#bouton PayPal 3');
 </script>
+
+<footer><p>© 2026 Travail en ligne Maroc</p></footer>
 </body>
 </html>
