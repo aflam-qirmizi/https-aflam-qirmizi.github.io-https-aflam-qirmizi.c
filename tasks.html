@@ -2,31 +2,21 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>المهام</title>
 <style>
-    body { font-family: Arial; background: #f2f2f2; text-align: center; padding: 20px; }
-    .boite { background: white; padding: 20px; border-radius: 10px; max-width: 400px; margin: 10px auto; box-shadow: 0 0 10px #ccc; }
-    #minuteur { font-size: 30px; font-weight: bold; color: red; margin: 15px 0; }
-    button { background: #28a745; color: white; border: none; padding: 12px 20px; font-size: 16px; border-radius: 8px; cursor: pointer; margin: 5px; width: 90%; }
-    button:disabled { background: gray; cursor: not-allowed; }
-    #bouton_deconnexion { background: red; }
-    #copyBtn { background: #007bff; }
-    input { width: 90%; padding: 10px; border-radius: 5px; border: 1px solid #ccc; text-align: center; }
+    body { font-family: Arial; background: #f2f2f2; text-align: center; padding: 20px; margin:0 }
+    .boite { background: white; padding: 20px; border-radius: 15px; max-width: 500px; margin: 20px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+    #minuteur { font-size: 24px; color: red; font-weight: bold; margin: 15px 0; }
+    button { padding: 14px 20px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin: 5px; }
+    #bouton_de_finition { background: gray; color: white; width: 90%; }
+    #bouton_de_finition:enabled { background: #28a745; }
+    input { width: 80%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; }
 </style>
 </head>
 <body>
-
-<div class="boite">
-    <h2>مرحبا بك</h2>
-    <p>الرصيد الحالي: <span id="equilibre">0</span> درهم</p>
-    <p>عدد المحالين: <span id="referrals">0</span></p>
-</div>
-
-<div class="boite">
-    <h3>🎁 مهمة الاحالة - 50 درهم</h3>
-    <input type="text" id="refLink" readonly value="غادي يطلع هنا">
-    <button id="copyBtn" onclick="copyLink()">نسخ الرابط</button>
-</div>
+<h1>مرحبا <span id="userEmail"></span></h1>
+<p>رصيدك: <span id="equilibre">0</span> درهم</p>
 
 <div class="boite">
     <h3>مهمة مشاهدة الفيديو - 20 درهم</h3>
@@ -37,41 +27,56 @@
     <button id="bouton_de_finition" onclick="finirTache()" disabled>انتظر حتى ينتهي العداد</button>
 </div>
 
+<div class="boite">
+    <h3>رابط الاحالة الخاص بك</h3>
+    <input type="text" id="refLink" readonly>
+    <button onclick="copyLink()" style="background:#007bff;color:white">نسخ الرابط</button>
+</div>
+
+<div>
+<button onclick="window.location='balance.html'" style="background:#28a745;color:white">💰 كم رصيد</button>
+<button onclick="window.location='withdraw.html'" style="background:red;color:white">💸 سحب المال</button>
+<button onclick="window.location='bank.html'" style="background:#007bff;color:white">🏦 البنك</button>
+</div>
+
 <script>
-    let tempsRestant = 60 * 60; 
-    let intervalMinuteur;
+document.getElementById('userEmail').innerText = localStorage.getItem("user") || "زائر";
+document.getElementById('equilibre').innerText = localStorage.getItem("balance") || "0";
+document.getElementById('refLink').value = window.location.origin + "/online-work-morocco/?ref=" + btoa(localStorage.getItem("user"));
 
-    function commencerMinuteur(){
-        intervalMinuteur = setInterval(() => {
-            tempsRestant--;
-            let h = Math.floor(tempsRestant / 3600);
-            let m = Math.floor((tempsRestant % 3600) / 60);
-            let s = tempsRestant % 60;
-            document.getElementById("minuteur").innerText = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-            if(tempsRestant <= 0){
-                clearInterval(intervalMinuteur);
-                document.getElementById("bouton_de_finition").disabled = false;
-                document.getElementById("bouton_de_finition").innerText = "اضغط لاستلام 20 درهم";
-            }
-        }, 1000);
-    }
-    
-    function finirTache(){
-        clearInterval(intervalMinuteur);
-        alert("مبروك! تم اضافة 20 درهم الى رصيدك");
-        document.getElementById("equilibre").innerText = "20";
-    }
-    
-    function copyLink(){
-        const link = document.getElementById("refLink");
-        link.select();
-        document.execCommand("copy");
-        alert("تم نسخ الرابط!");
-    }
+let tempsRestant = 60 * 60; 
+let minuteurIntervalle;
 
-    // تشغيل العداد مباشرة
-    commencerMinuteur();
-    document.getElementById("refLink").value = "https://benjyt803-ui.github.io/online-work-morocco/Register.html?ref=TEST123";
+function commencerMinuteur(){
+    minuteurIntervalle = setInterval(() => {
+        tempsRestant--;
+        let h = Math.floor(tempsRestant / 3600);
+        let m = Math.floor((tempsRestant % 3600) / 60);
+        let s = tempsRestant % 60;
+        document.getElementById("minuteur").innerText = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        if(tempsRestant <= 0){
+            clearInterval(minuteurIntervalle);
+            document.getElementById("bouton_de_finition").disabled = false;
+            document.getElementById("bouton_de_finition").innerText = "اضغط لاستلام 20 درهم";
+        }
+    }, 1000);
+}
+
+function finirTache(){
+    clearInterval(minuteurIntervalle);
+    let balance = parseInt(localStorage.getItem("balance")) + 20;
+    localStorage.setItem("balance", balance);
+    alert("مبروك! تم اضافة 20 درهم الى رصيدك");
+    document.getElementById("equilibre").innerText = balance;
+}
+
+function copyLink(){
+    const lien = document.getElementById("refLink");
+    lien.select();
+    document.execCommand("copy");
+    alert("تم نسخ الرابط!");
+}
+commencerMinuteur();
 </script>
 </body>
 </html>
