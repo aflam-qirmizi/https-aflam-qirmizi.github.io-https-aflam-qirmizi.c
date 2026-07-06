@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -5,8 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nos Services - Online Work Morocco</title>
     <link rel="stylesheet" href="style.css">
-    <!-- ركبت ليك Client ID ديالك هنا -->
-    <script src="https://www.paypal.com/sdk/js?client-id=bAdoX8bczo5p4oa66DBItvZSGFrur77JtAu7-bJv&currency=USD"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD"></script>
 </head>
 <body>
     <header>
@@ -14,85 +14,63 @@
         <nav>
             <a href="index.html">Accueil</a>
             <a href="services.html">Services</a>
-            <a href="contact.html">Contact</a>
+            <a href="Contact.html">Contact</a>
         </nav>
     </header>
 
-    <main>
+    <main class="container">
         <h2>Nos Services</h2>
         
         <div class="service-card">
             <h3>Montage Vidéo Professionnel</h3>
-            <p>Prix: 25 USD</p>
+            <p class="price">Prix: 25 USD</p>
             <p>Montage de votre vidéo jusqu'à 5 minutes avec effets et sous-titres.</p>
-            <div id="paypal-button-container-1"></div>
+            <div id="paypal-button-1"></div>
         </div>
 
         <div class="service-card">
             <h3>Design Logo</h3>
-            <p>Prix: 15 USD</p>
+            <p class="price">Prix: 15 USD</p>
             <p>Création de logo professionnel en 24h.</p>
-            <div id="paypal-button-container-2"></div>
+            <div id="paypal-button-2"></div>
         </div>
 
         <div class="service-card">
             <h3>Traduction FR-AR-EN</h3>
-            <p>Prix: 10 USD / 1000 mots</p>
+            <p class="price">Prix: 10 USD / 1000 mots</p>
             <p>Traduction rapide et précise.</p>
-            <div id="paypal-button-container-3"></div>
+            <div id="paypal-button-3"></div>
         </div>
-
     </main>
 
     <footer>
-        <p>© 2026 Online Work Morocco</p>
+        <p>© 2026 Online Work Morocco. Tous droits réservés.</p>
     </footer>
 
     <script>
-        // زر الدفع 1: Montage Vidéo
         paypal.Buttons({
             createOrder: function(data, actions) {
                 return actions.order.create({
-                    purchase_units: [{
-                        description: "Montage Vidéo Professionnel",
-                        amount: { value: '25.00' }
-                    }]
-                });
-            },
-            onApprove: function(data, actions) {
-                return actions.order.capture().then(function(details) {
-                    alert('Paiement réussi! Merci ' + details.payer.name.given_name);
+                    purchase_units: [{ amount: { value: '25.00' } }]
                 });
             }
-        }).render('#paypal-button-container-1');
+        }).render('#paypal-button-1');
 
-        // زر الدفع 2: Design Logo
         paypal.Buttons({
             createOrder: function(data, actions) {
                 return actions.order.create({
-                    purchase_units: [{ description: "Design Logo", amount: { value: '15.00' } }]
-                });
-            },
-            onApprove: function(data, actions) {
-                return actions.order.capture().then(function(details) {
-                    alert('Paiement réussi! Merci ' + details.payer.name.given_name);
+                    purchase_units: [{ amount: { value: '15.00' } }]
                 });
             }
-        }).render('#paypal-button-container-2');
+        }).render('#paypal-button-2');
 
-        // زر الدفع 3: Traduction
         paypal.Buttons({
             createOrder: function(data, actions) {
                 return actions.order.create({
-                    purchase_units: [{ description: "Traduction", amount: { value: '10.00' } }]
-                });
-            },
-            onApprove: function(data, actions) {
-                return actions.order.capture().then(function(details) {
-                    alert('Paiement réussi! Merci ' + details.payer.name.given_name);
+                    purchase_units: [{ amount: { value: '10.00' } }]
                 });
             }
-        }).render('#paypal-button-container-3');
+        }).render('#paypal-button-3');
     </script>
 </body>
 </html>
