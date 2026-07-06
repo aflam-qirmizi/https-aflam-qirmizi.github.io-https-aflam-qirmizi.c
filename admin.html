@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head><meta charset="UTF-8"><title>لوحة الادمن</title>
+<style>body{font-family:Arial;background:#f2f2f2;padding:20px}.box{background:white;padding:15px;margin:10px auto;border-radius:10px;max-width:500px}button{background:green;color:white;border:none;padding:10px;border-radius:8px}</style>
+</head>
+<body>
+<h2 style="text-align:center">طلبات السحب</h2><div id="requests">جار التحميل...</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = { /* حط الكونفيغ ديالك هنا */ };
+const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
+
+// بدّلها بالايميل ديالك باش غير انت تشوف الصفحة
+const ADMIN_EMAIL = "your_email@gmail.com"; 
+
+onAuthStateChanged(auth, async (user) => {
+ if(user && user.email === ADMIN_EMAIL){
+  const querySnapshot = await getDocs(collection(db, "users"));
+  let html = "";
+  querySnapshot.forEach((docSnap) => {
+    let data = docSnap.data();
+    if(data.withdrawRequest && data.withdrawRequest.status === "pending"){
+      html += `<div class="box">
+        <p><b>الايميل:</b> ${user.email}</p>
+        <p><b>المبلغ:</b> ${data.withdrawRequest.amount} درهم</p>
+        <p><b>الحساب البنكي:</b> ${data.withdrawRequest.bank}</p>
+        <button onclick="pay('${docSnap.id}')">تم الدفع</button>
+      </div>`;
+    }
+  });
+  document.getElementById("requests").innerHTML = html || "لا توجد طلبات";
+ } else {
+  document.body.innerHTML = "<h2>ممنوع الدخول. هذه صفحة الادمن فقط</h2>";
+ }
+});
+
+window.pay = async function(userId){
+ await updateDoc(doc(db,"users",userId),{"withdrawRequest.status":"paid"});
+ alert("تم تعليم الطلب كـ مدفوع");
+ location.reload();
+}
+</script></body></html>
