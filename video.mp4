@@ -1,2 +1,1 @@
-<!-- بدلي غير هاد الجزء ديال الفيديو -->
-<video class="video-box" id="workVideo" controls autoplay loop muted playsinline>
+<source src="video.mp4" type="video/mp4">
